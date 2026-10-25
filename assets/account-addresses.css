@@ -1,0 +1,62 @@
+/* Replace Woo's native address-list presentation only when the plugin book
+   is actually present. Native editing /my-account/edit-address/billing/ stays intact. */
+.woocommerce-MyAccount-content:has(> #dc-account-book) > .woocommerce-Addresses,
+.woocommerce-MyAccount-content:has(> #dc-account-book) > .woocommerce-Address,
+.woocommerce-MyAccount-content:has(> #dc-account-book) > p:first-child,
+.woocommerce-MyAccount-content:has(> #dc-account-book) > .gobackto-myaccount,
+.woocommerce-MyAccount-content:has(> #dc-account-book) > .gobackto-homepage{display:none!important}
+/* Account address book styles scoped to My Account > Addresses. */
+#dc-account-book {--dc-accent:#446084;--dc-border:#e1e6ed;--dc-muted:#66778b;direction:rtl;text-align:right;margin:24px 0 34px;clear:both;color:#263548}
+#dc-account-book *,#dc-account-book *::before,#dc-account-book *::after{box-sizing:border-box}
+#dc-account-book .dc-account-book-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 18px}
+#dc-account-book h2{font-size:21px;font-weight:700;margin:0 0 9px;color:#263548}
+#dc-account-book .dc-account-book-head p{font-size:13px;color:var(--dc-muted);line-height:2;margin:0 0 5px}
+#dc-account-book .dc-account-book-head small{display:block;color:#8794a3;font-size:12px}
+#dc-account-book .button{font-size:13px;font-weight:600;letter-spacing:0;text-transform:none;box-shadow:none;margin:0;border-radius:8px;min-height:36px;padding:7px 13px;line-height:1.6;white-space:normal}
+#dc-account-book button:disabled{opacity:.6;cursor:not-allowed}
+#dc-account-book .dc-account-book-add,#dc-account-book .dc-book-select,#dc-account-book .dc-book-submit{background:var(--dc-accent);color:#fff;border:1px solid var(--dc-accent)}
+#dc-account-book .dc-account-book-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+#dc-account-book .dc-account-book-card{border:1px solid var(--dc-border);border-radius:12px;background:#fff;padding:18px;display:flex;flex-direction:column;min-width:0}
+#dc-account-book .dc-account-book-card.dc-account-selected{background:#f6f8fb;border-color:#9eb2ce}
+#dc-account-book .dc-account-book-card-top{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-bottom:8px}
+#dc-account-book .dc-account-book-card-top strong{font-size:16px;color:#263548}
+#dc-account-book .dc-account-book-selected-tag{font-size:11px;background:#e5edf6;color:#446084;border-radius:20px;padding:4px 10px}
+#dc-account-book .dc-account-book-street{font-size:13px;line-height:2;color:#4d6078;min-height:56px;margin:4px 0 5px;overflow-wrap:anywhere}
+#dc-account-book .dc-account-book-person{font-size:12px;color:var(--dc-muted);margin:0 0 15px;line-height:1.9}
+#dc-account-book .dc-account-book-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+#dc-account-book .dc-account-book-actions .button:not(.dc-book-select){border:1px solid #dae2ed;background:#fff;color:#446084}
+#dc-account-book .dc-account-book-actions .dc-book-delete{color:#a43f45!important}
+#dc-account-book .dc-account-book-foot{margin-top:16px}
+#dc-account-book .dc-account-book-foot .button{background:#f0f4f8;color:#446084;border:1px solid #dce5ef}
+#dc-account-book .dc-account-book-notice:not(:empty){background:#fff2f2;color:#a62929;padding:9px 12px;margin-bottom:12px;border-radius:8px;font-size:13px}
+#dc-account-book .dc-account-book-empty{grid-column:1/-1;color:var(--dc-muted);padding:20px;border:1px dashed var(--dc-border);border-radius:10px;font-size:13px}
+#dc-account-book .dc-account-book-dialog[hidden],#dc-account-book .dc-book-confirm[hidden],#dc-account-book [hidden]{display:none!important}
+body.dc-account-book-locked{overflow:hidden!important}
+#dc-account-book .dc-account-book-dialog,#dc-account-book .dc-book-confirm{position:fixed;inset:0;z-index:100100;display:flex;align-items:center;justify-content:center;padding:18px}
+#dc-account-book .dc-book-dialog-backdrop{position:absolute;inset:0;background:rgba(23,34,51,.57)}
+#dc-account-book .dc-book-dialog-panel,#dc-account-book .dc-book-confirm-panel{position:relative;z-index:1;width:min(600px,100%);max-height:calc(100dvh - 36px);overflow-y:auto;background:#fff;border-radius:14px;box-shadow:0 18px 55px rgba(13,30,50,.24);padding:16px}
+#dc-account-book .dc-book-dialog-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #edf0f4;margin-bottom:10px;padding-bottom:9px}
+#dc-account-book .dc-book-dialog-head h3,#dc-account-book .dc-book-confirm-panel h3{font-size:18px;margin:0;color:#263548}
+#dc-account-book .dc-book-close{background:transparent;border:0;color:#52677d;font-size:27px;line-height:1;padding:0 8px;cursor:pointer}
+#dc-account-book .dc-book-fields{display:grid;gap:9px}
+#dc-account-book .dc-book-fields label{display:block;color:#4a5e75;font-size:13px;font-weight:500;margin:0}
+#dc-account-book .dc-book-fields input,#dc-account-book .dc-book-fields textarea,#dc-account-book .dc-book-fields select{display:block;margin:4px 0 0;padding:8px 10px;min-height:40px;width:100%;font-size:15px;border-radius:8px;border:1px solid #dce4ec;background:#fff;color:#223648;box-shadow:none}
+#dc-account-book .dc-book-two,#dc-account-book .dc-book-person-fields,#dc-account-book .dc-book-recipient-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#dc-account-book .dc-book-person-fields label:last-child,#dc-account-book .dc-book-recipient-fields label:last-child{grid-column:1/-1}
+#dc-account-book .dc-required{color:#d92937}
+#dc-account-book .dc-book-dialog-actions{display:flex;gap:8px;margin-top:12px;justify-content:flex-start}
+#dc-account-book .dc-book-dialog-actions .button:not(.dc-book-submit):not(.dc-book-confirm-delete){background:#fff;border:1px solid #dce4ec;color:#446084}
+/* The cancel action shares .dc-book-close with the X icon: override the 27px icon type only here. */
+#dc-account-book .dc-book-dialog-actions .dc-book-close,
+#dc-account-book .dc-book-dialog-actions .dc-book-confirm-cancel{
+  font-size:13px!important;line-height:1.6!important;font-weight:600!important;
+  min-height:36px!important;height:auto!important;padding:6px 12px!important;
+  letter-spacing:0!important;text-transform:none!important;
+}
+#dc-account-book .dc-book-confirm-panel{max-width:440px}
+#dc-account-book .dc-book-confirm-panel p{font-size:13px;line-height:2;color:#57687b;margin:12px 0}
+#dc-account-book .dc-book-confirm-delete{background:#ad333c;border:1px solid #ad333c;color:#fff}
+#dc-account-book .dc-book-form-error:not(:empty),#dc-account-book .dc-book-confirm-error:not(:empty){color:#a72f38;background:#fff0f0;border-radius:8px;padding:10px;font-size:13px;margin-top:12px}
+@media(max-width:700px){#dc-account-book .dc-account-book-grid{grid-template-columns:1fr}#dc-account-book .dc-account-book-head{align-items:stretch;flex-direction:column}#dc-account-book .dc-account-book-add{align-self:flex-start}#dc-account-book .dc-book-dialog-panel{max-height:100dvh;height:100dvh;border-radius:0;padding:14px;width:100vw}#dc-account-book .dc-account-book-dialog{padding:0}#dc-account-book .dc-book-two,#dc-account-book .dc-book-person-fields,#dc-account-book .dc-book-recipient-fields{gap:8px}#dc-account-book .dc-book-fields input,#dc-account-book .dc-book-fields select,#dc-account-book .dc-book-fields textarea{font-size:16px}}
+
+#dc-account-book .dc-account-book-foot{display:flex;gap:9px;flex-wrap:wrap}

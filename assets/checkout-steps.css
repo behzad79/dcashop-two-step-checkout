@@ -1,0 +1,1023 @@
+/* Full-screen checkout loader.
+   The loader is printed INSIDE the checkout content. Hiding body children
+   would also hide the loader's ancestors; use inherited visibility instead.
+   If checkout JS does not initialize, reveal the native form after 10 sec. */
+body.dc-checkout-awaiting-layout:not(.dc-checkout-steps-ready),
+body.dc-checkout-steps-ready.dc-checkout-transitioning {
+  visibility: hidden;
+  animation: dc-checkout-fallback-visible 0s linear 10s 1 forwards;
+}
+
+body .dc-checkout-initial-loader { display: none; }
+body.dc-checkout-awaiting-layout:not(.dc-checkout-steps-ready) .dc-checkout-initial-loader,
+body.dc-checkout-steps-ready.dc-checkout-transitioning .dc-checkout-initial-loader {
+  display: flex !important;
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  z-index: 2147483000 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+  margin: 0 !important;
+  background: #aaa !important; /* opaque: no header, stars or old form behind */
+  color: #446084 !important;
+  opacity: 1 !important;
+  visibility: visible !important; /* overrides body's inherited hidden state */
+  pointer-events: auto !important;
+  box-sizing: border-box;
+  animation: dc-checkout-fallback-hide 0s linear 10s 1 forwards;
+}
+body.dc-checkout-steps-ready:not(.dc-checkout-transitioning) .dc-checkout-initial-loader {
+  display: none !important;
+}
+.dc-checkout-loading-card {
+  width:344px;
+  max-width:100%;
+  min-height:196px;
+  padding:28px 24px 18px;
+  box-sizing:border-box;
+  background:#fff;
+  border-radius:9px;
+  box-shadow:0 4px 20px rgba(0,0,0,.07);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  direction:ltr;
+}
+.dc-checkout-loading-logo {
+  display:block !important;
+  width:auto !important;
+  max-width:100% !important;
+  max-height:90px !important;
+  height:auto !important;
+  margin:auto !important;
+  object-fit:contain !important;
+  opacity:1 !important;
+}
+.dc-checkout-loading-wordmark {
+  font-size:34px;
+  letter-spacing:.15em;
+  color:#446084;
+  font-weight:300;
+  margin:auto;
+}
+.dc-checkout-initial-spinner {
+  display:block !important;
+  flex:0 0 auto;
+  width:31px;
+  height:31px;
+  margin:0 auto;
+  border:3px solid #e5e5e5;
+  border-bottom-color:#515151;
+  border-radius:50%;
+  box-sizing:border-box;
+  animation:dc-checkout-spinner .85s linear infinite;
+}
+@media (max-width:599px) {
+  .dc-checkout-loading-card {width:188px; min-height:132px; padding:18px 16px 13px; gap:12px;}
+  .dc-checkout-loading-logo { max-height:63px !important; }
+  .dc-checkout-loading-wordmark { font-size:23px; }
+  .dc-checkout-initial-spinner {width:29px; height:29px;}
+}
+@keyframes dc-checkout-spinner {to{transform:rotate(360deg)}}
+@keyframes dc-checkout-fallback-visible {to{visibility:visible}}
+@keyframes dc-checkout-fallback-hide {to{opacity:0;visibility:hidden;pointer-events:none}}
+@media (prefers-reduced-motion:reduce) {
+  .dc-checkout-initial-spinner {animation-duration:2s}
+}
+
+/* Checkout layout; WooCommerce/YITH fields and order logic remain native. */
+body.dc-checkout-steps-ready { --dc-blue:#446084; --dc-line:#e5e9ef; --dc-ink:#263548; --dc-muted:#68788c; --dc-soft:#f7f9fc; }
+body.dc-checkout-steps-ready.dc-lock-scroll { overflow:hidden !important; }
+body.dc-checkout-steps-ready .checkout-page-title,
+body.dc-checkout-steps-ready .checkout-page-title-container,
+body.dc-checkout-steps-ready .dc-steps-progress,
+body.dc-checkout-steps-ready #customer_details>a:first-child,
+body.dc-checkout-steps-ready #order_review_heading,
+body.dc-checkout-steps-ready .woocommerce-billing-fields > h3,
+body.dc-checkout-steps-ready .dc-coupon-outside { display:none !important; }
+body.dc-checkout-steps-ready form.checkout { color:var(--dc-ink); }
+body.dc-checkout-steps-ready form.checkout > .row { display:flex !important; flex-flow:row wrap !important; align-items:flex-start; }
+body.dc-checkout-steps-ready form.checkout .dc-customer-step-col,
+body.dc-checkout-steps-ready form.checkout .dc-payment-step-col { min-width:0; }
+body.dc-checkout-steps-ready form.checkout.dc-show-payment .dc-customer-step-col { display:none !important; }
+body.dc-checkout-steps-ready form.checkout.dc-show-shipping .dc-customer-step-col,
+body.dc-checkout-steps-ready form.checkout.dc-show-shipping .dc-payment-step-col { display:block !important; }
+body.dc-checkout-steps-ready form.checkout.dc-show-payment .dc-payment-step-col { display:block !important; flex:0 0 100% !important; max-width:100% !important; width:100% !important; }
+body.dc-checkout-steps-ready .dc-payment-step-col > .col-inner,
+body.dc-checkout-steps-ready .dc-payment-step-col .col-inner { position:static !important; border:0 !important; background:transparent !important; box-shadow:none !important; padding:0 !important; }
+body.dc-checkout-steps-ready .dc-payment-step-col .checkout-sidebar { padding:0 !important; background:transparent !important; }
+body.dc-checkout-steps-ready .dc-payment-step-col #order_review { min-width:0; }
+body.dc-checkout-steps-ready .dc-payment-step-col #order_review .dc-summary-panel { min-width:0; background:#fff; padding:22px 23px; border:1px solid var(--dc-line); border-radius:12px; }
+body.dc-checkout-steps-ready .dc-summary-panel > h2,
+body.dc-checkout-steps-ready .dc-payment-main > h2,
+body.dc-checkout-steps-ready .dc-coupon-panel > h2 { font-size:17px; color:var(--dc-ink); line-height:1.8; font-weight:700; margin:0 0 15px; }
+body.dc-checkout-steps-ready .dc-summary-panel .woocommerce-checkout-review-order-table {
+  display:table !important; width:100% !important; border:0 !important; border-collapse:collapse; margin:0 !important;
+  background:transparent !important; box-shadow:none !important;
+}
+body.dc-checkout-steps-ready .dc-summary-panel table thead,
+body.dc-checkout-steps-ready .dc-summary-panel table tbody { display:none !important; }
+body.dc-checkout-steps-ready .dc-summary-panel table tfoot { display:table-footer-group !important; }
+body.dc-checkout-steps-ready .dc-summary-panel table tfoot tr { border-bottom:1px solid #edf0f4; }
+body.dc-checkout-steps-ready .dc-summary-panel table tfoot tr:last-child { border-bottom:0; }
+body.dc-checkout-steps-ready .dc-summary-panel table th,
+body.dc-checkout-steps-ready .dc-summary-panel table td { padding:14px 2px !important; border:0 !important; font-size:13px; vertical-align:middle; color:var(--dc-muted); font-weight:400; line-height:1.9; }
+body.dc-checkout-steps-ready .dc-summary-panel table th { text-align:right; }
+body.dc-checkout-steps-ready .dc-summary-panel table td { text-align:left; }
+body.dc-checkout-steps-ready .dc-summary-panel table tr.order-total th,
+body.dc-checkout-steps-ready .dc-summary-panel table tr.order-total td { color:var(--dc-ink); font-weight:700; font-size:15px; }
+body.dc-checkout-steps-ready .dc-summary-panel .dc-step-controls { padding:17px 0 0; margin:13px 0 0; border-top:1px solid var(--dc-line); }
+body.dc-checkout-steps-ready .dc-summary-panel .dc-next-step { display:block; width:100%; margin:0 !important; border:0 !important; padding:11px 15px; min-height:48px; border-radius:9px !important; color:#fff !important; background:var(--dc-blue) !important; font-size:14px; font-weight:700; text-transform:none; letter-spacing:0; box-shadow:none !important; }
+body.dc-checkout-steps-ready .dc-step-status:not(:empty) { margin-bottom:10px; padding:11px; border-radius:8px; background:#f4f6fa; color:#536983; font-size:13px; }
+body.dc-checkout-steps-ready .dc-step-status.dc-has-error { background:#fff0f0; color:#9b2b2b; }
+body.dc-checkout-steps-ready form.checkout.dc-show-payment .dc-step-controls { display:none !important; }
+
+/* Address display: one line of actions, no customer phone/name outside modal. */
+body.dc-checkout-steps-ready form.checkout .dc-address-block { padding:14px 0 18px; margin:0 0 19px; background:#fff; border:0; border-bottom:6px solid #f8f9fb; }
+body.dc-checkout-steps-ready .dc-address-heading { display:flex; justify-content:space-between; align-items:center; gap:14px; margin-bottom:10px; }
+body.dc-checkout-steps-ready .dc-address-heading h2 { font-weight:500; font-size:17px; margin:0; color:var(--dc-ink); }
+body.dc-checkout-steps-ready .dc-address-heading button { flex-shrink:0; font-size:12px; color:var(--dc-blue) !important; border:1px solid #dbe2ed !important; background:#fff !important; padding:5px 13px !important; line-height:1.5; min-height:34px; border-radius:8px; margin:0; text-transform:none; letter-spacing:0; box-shadow:none !important; }
+body.dc-checkout-steps-ready .dc-address-current { color:#647389; font-size:13px; line-height:2; margin:0; }
+body.dc-checkout-steps-ready .dc-address-current.dc-no-address { color:#8a97a5; }
+body.dc-checkout-steps-ready .dc-customer-step-col .dc-shipping-title { font-size:17px; font-weight:700; color:var(--dc-ink); border-bottom:1px solid #e9edf2; margin:9px 0 17px; padding:0 0 13px; }
+body.dc-checkout-steps-ready .dc-customer-step-col .my-custom-shipping-table { margin:0 0 20px; padding:0; background:#fff; border:0; }
+body.dc-checkout-steps-ready .dc-customer-step-col .my-custom-shipping-table .shipping__list.woocommerce-shipping-methods li.shipping__list_item { border:1px solid #dce3ed; border-radius:12px; padding:14px 15px; margin:0 0 9px; }
+body.dc-checkout-steps-ready .dc-customer-step-col .my-custom-shipping-table .shipping__list.woocommerce-shipping-methods li.shipping__list_item:has(input:checked) { background:#f2f5fa; border-color:#9cacc1; }
+body.dc-checkout-steps-ready .dc-customer-step-col .woocommerce-additional-fields { background:transparent; padding:7px 0; }
+body.dc-checkout-steps-ready .dc-customer-step-col .woocommerce-additional-fields label { color:#69798d; }
+
+/* Payment: unboxed two-column areas; coupon + payment on the right, summary on the left. */
+body.dc-checkout-steps-ready form.checkout.dc-show-shipping .dc-payment-main,
+body.dc-checkout-steps-ready form.checkout.dc-show-shipping .dc-go-back { display:none !important; }
+body.dc-checkout-steps-ready .dc-payment-main { padding:2px 0; min-width:0; }
+body.dc-checkout-steps-ready .dc-payment-main #payment { background:#fff !important; border:0 !important; border-radius:0 !important; padding:2px 0 !important; box-shadow:none !important; }
+body.dc-checkout-steps-ready .dc-payment-main #place_order { background:var(--dc-blue) !important; color:#fff !important; border-radius:9px !important; }
+body.dc-checkout-steps-ready .dc-go-back { display:block; width:max-content; background:transparent !important; border:0 !important; box-shadow:none !important; color:var(--dc-blue) !important; font-size:13px; padding:4px 0 16px; text-transform:none; letter-spacing:0; }
+body.dc-checkout-steps-ready .dc-coupon-panel { padding:0 0 24px; margin:0 0 24px; border-bottom:7px solid #f5f6f8; }
+body.dc-checkout-steps-ready .dc-coupon-inline { display:flex; gap:10px; flex-wrap:nowrap; }
+body.dc-checkout-steps-ready .dc-coupon-inline input { min-width:0; flex:1; margin:0 !important; height:44px; background:#fff; border:1px solid #dbe2eb; border-radius:8px; box-shadow:none; }
+body.dc-checkout-steps-ready .dc-coupon-inline button { min-height:44px; border-radius:8px; background:var(--dc-blue) !important; color:#fff !important; box-shadow:none !important; border:0; margin:0; padding:8px 16px; font-size:13px; text-transform:none; letter-spacing:0; }
+body.dc-checkout-steps-ready .dc-coupon-feedback { color:#566c87; font-size:12px; line-height:1.9; margin:6px 0 0; }
+body.dc-checkout-steps-ready .dc-wallet-panel { display:none; padding:7px 0 14px; }
+body.dc-checkout-steps-ready.dc-body-payment-step .dc-wallet-panel.dc-has-wallet { display:block; }
+body.dc-checkout-steps-ready .dc-wallet-panel table { border:0 !important; margin:0 !important; }
+body.dc-checkout-steps-ready .dc-wallet-panel td, body.dc-checkout-steps-ready .dc-wallet-panel th { border:0; padding:10px 0; }
+body.dc-checkout-steps-ready .dc-mobile-fixed-actions { display:none; }
+
+/* Address selection and editor share the same screen overlay, with native billing fields in place. */
+body.dc-checkout-steps-ready form.checkout .woocommerce-billing-fields {
+  position:fixed !important; top:50% !important; right:-200vw !important; transform:translate(50%,-50%);
+  width:min(590px,calc(100vw - 32px)) !important; max-width:none !important; max-height:calc(100dvh - 40px) !important;
+  overflow-y:auto !important; overflow-x:hidden !important; overscroll-behavior:contain;
+  background:#fff !important; border:1px solid #dfe4ed !important; border-radius:16px !important;
+  padding:0 24px !important; margin:0 !important; box-sizing:border-box !important;
+  z-index:100020 !important; visibility:hidden; opacity:0; direction:rtl;
+  display:flex !important; flex-direction:column !important; box-shadow:0 16px 65px rgba(17,30,46,.18) !important;
+}
+body.dc-checkout-steps-ready.dc-address-modal-open form.checkout .woocommerce-billing-fields { right:50% !important; visibility:visible; opacity:1; }
+body.dc-checkout-steps-ready .dc-modal-shade { display:none; background:rgba(22,29,39,.46); position:fixed; inset:0; z-index:100015; }
+body.dc-checkout-steps-ready.dc-address-modal-open .dc-modal-shade,body.dc-checkout-steps-ready.dc-picker-open .dc-modal-shade { display:block; }
+body.dc-checkout-steps-ready .woocommerce-billing-fields .dc-modal-header,
+body.dc-checkout-steps-ready .dc-picker-header { position:sticky; z-index:9; top:0; min-height:59px; flex:0 0 59px; display:flex; align-items:center; justify-content:space-between; background:#fff; border-bottom:1px solid #ecedf1; padding:0 24px; margin:0 -24px 18px; }
+body.dc-checkout-steps-ready .dc-modal-header h2,body.dc-checkout-steps-ready .dc-picker-header h2 { font-size:17px; font-weight:700; margin:0; color:var(--dc-ink); }
+body.dc-checkout-steps-ready .dc-modal-close,body.dc-checkout-steps-ready .dc-picker-close { order:2; width:32px; height:32px; margin:0 !important; background:none !important; border:0 !important; box-shadow:none !important; color:#34455b !important; font-size:26px; padding:0; }
+body.dc-checkout-steps-ready .woocommerce-billing-fields .dc-modal-footer { position:sticky; z-index:10; bottom:0; min-height:72px; flex:0 0 auto; display:flex; align-items:center; gap:9px; background:#fff; border-top:1px solid #e8ebf0; margin:auto -24px 0; padding:12px 24px; }
+body.dc-checkout-steps-ready .dc-modal-footer button,body.dc-checkout-steps-ready .dc-picker-footer button { min-height:44px; margin:0; border:0; border-radius:9px; padding:8px 16px; font-size:13px; letter-spacing:0; font-weight:700; text-transform:none; box-shadow:none; }
+body.dc-checkout-steps-ready .dc-modal-footer .dc-modal-main,body.dc-checkout-steps-ready .dc-picker-footer .dc-picker-new { background:var(--dc-blue) !important; color:#fff !important; }
+body.dc-checkout-steps-ready .dc-modal-footer .dc-modal-back,body.dc-checkout-steps-ready .dc-modal-footer .dc-modal-manual { border:1px solid #dfe5ed !important; background:#fff !important; color:var(--dc-blue) !important; }
+body.dc-checkout-steps-ready .dc-modal-help { color:#77859a; font-size:13px; line-height:1.9; margin:0 0 13px; }
+body.dc-checkout-steps-ready .dc-modal-error:not(:empty) { font-size:13px; color:#a43131; background:#fff2f2; border:1px solid #f2c8c8; padding:10px; border-radius:8px; line-height:1.9; margin:0 0 12px; }
+body.dc-checkout-steps-ready .woocommerce-billing-fields input:not([type="hidden"]),body.dc-checkout-steps-ready .woocommerce-billing-fields textarea,body.dc-checkout-steps-ready .woocommerce-billing-fields select { border-radius:9px !important; border:1px solid #dce2ec; background:#fff; box-shadow:none; }
+body.dc-checkout-steps-ready .woocommerce-billing-fields label { color:#5e7086; font-size:13px; font-weight:500; }
+body.dc-checkout-steps-ready .woocommerce-billing-fields .form-row { margin-bottom:13px; }
+body.dc-checkout-steps-ready .woocommerce-billing-fields #billing_map_lat_long_field,body.dc-checkout-steps-ready .woocommerce-billing-fields #billing_long_lat_map_field { display:none !important; }
+body.dc-checkout-steps-ready .dc-modal-identity .woocommerce-billing-fields__field-wrapper > :not(#billing_first_name_field):not(#billing_last_name_field) { display:none !important; }
+body.dc-checkout-steps-ready .dc-modal-identity #map,body.dc-checkout-steps-ready .dc-modal-details #map,body.dc-checkout-steps-ready .dc-modal-identity .map-search-results,
+body.dc-checkout-steps-ready .dc-modal-identity .dc-map-hint,body.dc-checkout-steps-ready .dc-modal-identity .dc-details-hint,
+body.dc-checkout-steps-ready .dc-modal-map .dc-identity-help,body.dc-checkout-steps-ready .dc-modal-map .dc-details-hint,
+body.dc-checkout-steps-ready .dc-modal-details .dc-identity-help,body.dc-checkout-steps-ready .dc-modal-details .dc-map-hint,
+body.dc-checkout-steps-ready .dc-modal-confirm .dc-modal-help { display:none !important; }
+body.dc-checkout-steps-ready .dc-modal-map .woocommerce-billing-fields__field-wrapper,
+body.dc-checkout-steps-ready .dc-modal-confirm .woocommerce-billing-fields__field-wrapper { display:none !important; }
+body.dc-checkout-steps-ready .woocommerce-billing-fields #map { max-width:100%; overflow:hidden; border-radius:11px; }
+body.dc-checkout-steps-ready .dc-modal-map #map { display:block !important; width:100% !important; height:360px !important; }
+body.dc-checkout-steps-ready .dc-modal-confirm #map { display:block !important; width:100% !important; height:145px !important; min-height:145px !important; pointer-events:none !important; }
+body.dc-checkout-steps-ready .dc-modal-confirm #map_search,body.dc-checkout-steps-ready .dc-modal-confirm .map-search-results { display:none !important; }
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper { display:flex !important; flex-wrap:wrap; gap:0 3%; }
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > .form-row { display:none !important; }
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_state_field,
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_city_field,
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_address_1_field,
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_postcode_field { display:block !important; width:100%; float:none; }
+body.dc-checkout-steps-ready .dc-modal-details.dc-editing-address .woocommerce-billing-fields__field-wrapper > #billing_first_name_field,
+body.dc-checkout-steps-ready .dc-modal-details.dc-editing-address .woocommerce-billing-fields__field-wrapper > #billing_last_name_field,
+body.dc-checkout-steps-ready .dc-modal-details.dc-editing-address .woocommerce-billing-fields__field-wrapper > #billing_phone_field { display:block !important; float:none; }
+body.dc-checkout-steps-ready .dc-modal-details.dc-editing-address #billing_first_name_field,body.dc-checkout-steps-ready .dc-modal-details.dc-editing-address #billing_last_name_field { width:48.5% !important; }
+body.dc-checkout-steps-ready .dc-modal-details.dc-editing-address #billing_phone_field { width:100% !important; }
+body.dc-checkout-steps-ready .dc-modal-identity .dc-address-confirm,body.dc-checkout-steps-ready .dc-modal-map .dc-address-confirm,body.dc-checkout-steps-ready .dc-modal-details .dc-address-confirm { display:none !important; }
+body.dc-checkout-steps-ready .dc-modal-confirm .dc-address-confirm { display:block !important; margin-top:12px; }
+body.dc-checkout-steps-ready .dc-address-confirm { padding-bottom:18px; }
+body.dc-checkout-steps-ready .dc-confirm-map-heading { font-size:13px; font-weight:700; color:#506780; margin:0 0 8px; }
+body.dc-checkout-steps-ready .dc-confirm-location { background:#f6f8fb; color:#52667d; border:1px solid #e9edf3; border-radius:9px; padding:10px 12px; line-height:2; font-size:13px; margin:13px 0; }
+body.dc-checkout-steps-ready .dc-confirm-label { margin:16px 0; }
+body.dc-checkout-steps-ready .dc-confirm-label label { display:block; margin:0 0 8px; }
+body.dc-checkout-steps-ready .dc-confirm-label input { width:100%; height:46px; padding:9px 12px; }
+body.dc-checkout-steps-ready .dc-confirm-recipient { padding:15px 0 0; border-top:1px solid #edf0f5; }
+body.dc-checkout-steps-ready .dc-confirm-recipient > strong { display:block; margin:0 0 12px; font-size:13px; color:var(--dc-ink); }
+body.dc-checkout-steps-ready .dc-recipient-options { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+body.dc-checkout-steps-ready .dc-recipient-options label { display:flex; align-items:center; gap:8px; border:1px solid #e2e7f0; padding:10px; border-radius:9px; cursor:pointer; }
+body.dc-checkout-steps-ready .dc-recipient-options input { accent-color:var(--dc-blue); margin:0; }
+body.dc-checkout-steps-ready .dc-recipient-self-note { font-size:12px; color:#718298; margin:11px 0 0; }
+body.dc-checkout-steps-ready .dc-recipient-other-fields { display:none; margin-top:15px; grid-template-columns:1fr 1fr; gap:10px; }
+body.dc-checkout-steps-ready .dc-confirm-recipient.dc-recipient-other .dc-recipient-other-fields { display:grid; }
+body.dc-checkout-steps-ready .dc-confirm-recipient.dc-recipient-other .dc-recipient-self-note { display:none; }
+body.dc-checkout-steps-ready .dc-recipient-other-fields label { display:block; }
+body.dc-checkout-steps-ready .dc-recipient-other-fields input { width:100%; min-height:44px; margin-top:7px; padding:8px; }
+body.dc-checkout-steps-ready .dc-recipient-phone-wrap { grid-column:1 / -1; }
+body.dc-checkout-steps-ready .dc-modal-map .dc-modal-back,body.dc-checkout-steps-ready .dc-modal-map .dc-address-confirm,
+body.dc-checkout-steps-ready .dc-modal-identity .dc-modal-back,body.dc-checkout-steps-ready .dc-modal-identity .dc-modal-manual,
+body.dc-checkout-steps-ready .dc-modal-details .dc-modal-manual,body.dc-checkout-steps-ready .dc-modal-confirm .dc-modal-manual { display:none !important; }
+
+/* Saved address picker including delete action and left-aligned add button. */
+body.dc-checkout-steps-ready .dc-address-picker { position:fixed; z-index:100025; top:50%; right:50%; transform:translate(50%,-50%); display:none; width:min(590px,calc(100vw - 32px)); max-height:calc(100dvh - 40px); overflow:auto; padding:0 20px; direction:rtl; background:#fff; border:1px solid #e1e6ef; border-radius:15px; box-shadow:0 16px 65px rgba(17,30,46,.2); }
+body.dc-checkout-steps-ready.dc-picker-open .dc-address-picker { display:block; }
+body.dc-checkout-steps-ready .dc-address-picker .dc-picker-header { position:sticky; margin:0 -20px 12px; padding:0 20px; }
+body.dc-checkout-steps-ready .dc-picker-card { margin:0 0 10px; padding:15px; border:1px solid #e2e7ef; border-radius:11px; }
+body.dc-checkout-steps-ready .dc-picker-card.dc-selected { background:#f5f7fb; border-color:#95abc6; }
+body.dc-checkout-steps-ready .dc-picker-card h3 { color:var(--dc-ink); font-size:14px; margin:0 0 7px; }
+body.dc-checkout-steps-ready .dc-picker-card p { color:#69798e; font-size:13px; line-height:1.9; margin:0 0 12px; }
+body.dc-checkout-steps-ready .dc-picker-card-actions { display:flex; gap:8px; flex-wrap:wrap; }
+body.dc-checkout-steps-ready .dc-picker-card-actions button { font-size:12px; text-transform:none; letter-spacing:0; margin:0; padding:6px 12px; color:var(--dc-blue) !important; background:#fff !important; border:1px solid #dce3ed !important; border-radius:8px; box-shadow:none; }
+body.dc-checkout-steps-ready .dc-picker-card-actions .dc-delete-address { color:#a43b42 !important; border-color:#f0ced0 !important; }
+body.dc-checkout-steps-ready .dc-picker-footer { position:sticky; z-index:8; bottom:0; display:flex; justify-content:flex-end; margin:13px -20px 0; padding:12px 20px; border-top:1px solid #edf0f3; background:#fff; }
+body.dc-checkout-steps-ready .dc-picker-empty { padding:22px 0; color:#8090a3; text-align:center; font-size:13px; }
+
+@media (min-width: 900px) {
+  body.dc-checkout-steps-ready form.checkout.dc-show-shipping .dc-customer-step-col { flex:0 0 62% !important; max-width:62% !important; width:62% !important; }
+  body.dc-checkout-steps-ready form.checkout.dc-show-shipping .dc-payment-step-col { flex:0 0 38% !important; max-width:38% !important; width:38% !important; }
+  body.dc-checkout-steps-ready form.checkout.dc-show-shipping .dc-payment-step-col .dc-summary-panel { padding:22px 20px; }
+  body.dc-checkout-steps-ready form.checkout.dc-show-shipping .dc-payment-step-col .dc-payment-main { display:none !important; }
+  body.dc-checkout-steps-ready form.checkout.dc-show-payment #order_review { display:grid !important; grid-template-columns:minmax(0, 1.25fr) minmax(290px, .88fr); gap:28px; align-items:start; }
+  body.dc-checkout-steps-ready form.checkout.dc-show-payment #order_review > .dc-payment-main { grid-column:1; grid-row:1; }
+  body.dc-checkout-steps-ready form.checkout.dc-show-payment #order_review > .dc-summary-panel { grid-column:2; grid-row:1; }
+}
+@media (max-width: 899px) {
+  body.dc-checkout-steps-ready form.checkout.dc-show-shipping .dc-customer-step-col,
+  body.dc-checkout-steps-ready form.checkout.dc-show-shipping .dc-payment-step-col,
+  body.dc-checkout-steps-ready form.checkout.dc-show-payment .dc-payment-step-col { flex:0 0 100% !important; max-width:100% !important; width:100% !important; }
+  body.dc-checkout-steps-ready form.checkout.dc-show-shipping .dc-payment-main { display:none !important; }
+  body.dc-checkout-steps-ready form.checkout.dc-show-shipping .dc-payment-step-col { display:block !important; }
+  body.dc-checkout-steps-ready form.checkout.dc-show-payment #order_review { display:flex !important; flex-direction:column; gap:16px; }
+  body.dc-checkout-steps-ready form.checkout.dc-show-payment #order_review > .dc-payment-main,
+  body.dc-checkout-steps-ready form.checkout.dc-show-payment #order_review > .dc-summary-panel { width:100%; }
+}
+@media (max-width: 767px) {
+  body.dc-checkout-steps-ready form.checkout { padding-bottom:95px; }
+  body.dc-checkout-steps-ready .dc-address-block { padding:10px 0 15px !important; }
+  body.dc-checkout-steps-ready .dc-payment-step-col .dc-summary-panel { padding:18px 15px !important; }
+  body.dc-checkout-steps-ready .dc-summary-panel .dc-next-step { display:none !important; }
+  body.dc-checkout-steps-ready .dc-summary-panel .dc-step-controls { border:0; padding:0; }
+  body.dc-checkout-steps-ready .dc-summary-panel .dc-step-status:not(:empty) { margin-top:10px; }
+  body.dc-checkout-steps-ready .dc-mobile-fixed-actions { display:flex; position:fixed; z-index:10000; bottom:0; left:0; right:0; align-items:center; gap:10px; padding:11px 14px calc(11px + env(safe-area-inset-bottom)); background:#fff; border-top:1px solid #e0e7ef; box-shadow:0 -4px 22px rgba(18,37,62,.1); direction:rtl; }
+  body.dc-checkout-steps-ready .dc-mobile-primary { flex:1; min-height:47px; background:var(--dc-blue) !important; border:0; border-radius:9px; color:#fff !important; padding:9px 11px; margin:0; box-shadow:none; text-transform:none; letter-spacing:0; font-weight:700; font-size:13px; }
+  body.dc-checkout-steps-ready .dc-fixed-total { flex:0 0 auto; max-width:38%; display:flex; flex-direction:column; gap:2px; }
+  body.dc-checkout-steps-ready .dc-fixed-total small { color:#7c8ba0; font-size:11px; }
+  body.dc-checkout-steps-ready .dc-fixed-total strong { color:var(--dc-ink); font-size:12px; line-height:1.5; }
+  body.dc-checkout-steps-ready.dc-address-modal-open .dc-mobile-fixed-actions,body.dc-checkout-steps-ready.dc-picker-open .dc-mobile-fixed-actions { display:none !important; }
+  body.dc-checkout-steps-ready form.checkout.dc-show-payment #place_order { position:absolute !important; left:-9999px !important; width:1px !important; height:1px !important; padding:0 !important; }
+  body.dc-checkout-steps-ready.dc-address-modal-open form.checkout .woocommerce-billing-fields {
+    top:0 !important; right:0 !important; transform:none !important; width:100vw !important;
+    height:100dvh !important; max-height:100dvh !important; border:0 !important; border-radius:0 !important; padding:0 16px !important;
+  }
+  body.dc-checkout-steps-ready .woocommerce-billing-fields .dc-modal-header { margin:0 -16px 15px; padding:0 16px; }
+  body.dc-checkout-steps-ready .woocommerce-billing-fields .dc-modal-footer { margin:auto -16px 0; padding:10px 16px calc(10px + env(safe-area-inset-bottom)); }
+  body.dc-checkout-steps-ready .dc-modal-map #map { height:calc(100dvh - 230px) !important; min-height:270px; }
+  body.dc-checkout-steps-ready .dc-modal-confirm #map { height:145px !important; min-height:145px !important; }
+  body.dc-checkout-steps-ready .dc-address-picker { top:0; right:0; transform:none; width:100vw; height:100dvh; max-height:100dvh; border:0; border-radius:0; padding:0 16px; }
+  body.dc-checkout-steps-ready .dc-address-picker .dc-picker-header { margin:0 -16px 15px; padding:0 16px; }
+  body.dc-checkout-steps-ready .dc-picker-footer { margin:auto -16px 0; padding:12px 16px calc(12px + env(safe-area-inset-bottom)); }
+  body.dc-checkout-steps-ready .dc-picker-footer button { width:auto; }
+  body.dc-checkout-steps-ready .woocommerce-billing-fields input:not([type="radio"]),body.dc-checkout-steps-ready .woocommerce-billing-fields select,body.dc-checkout-steps-ready .woocommerce-billing-fields textarea { font-size:16px !important; }
+  body.dc-checkout-steps-ready .dc-recipient-other-fields { grid-template-columns:1fr !important; }
+  body.dc-checkout-steps-ready .dc-recipient-phone-wrap { grid-column:auto; }
+}
+
+body.dc-checkout-steps-ready .dc-modal-confirm:not(.dc-has-coordinates) #map { display:none !important; }
+
+body.dc-checkout-steps-ready .dc-modal-details #map_search,
+body.dc-checkout-steps-ready .dc-modal-identity #map_search { display:none !important; }
+
+
+/* 0.4.1 visual refinements */
+body.dc-checkout-steps-ready form.checkout > .row { column-gap: 28px; }
+body.dc-checkout-steps-ready form.checkout .dc-customer-step-col, body.dc-checkout-steps-ready form.checkout .dc-payment-step-col { padding-inline: 12px; }
+body.dc-checkout-steps-ready .dc-payment-step-col #order_review .dc-summary-panel, body.dc-checkout-steps-ready .dc-payment-main { padding-inline: 26px; }
+body.dc-checkout-steps-ready .dc-summary-panel > h2, body.dc-checkout-steps-ready .dc-payment-main > h2, body.dc-checkout-steps-ready .dc-coupon-panel > h2, body.dc-checkout-steps-ready .dc-address-heading h2, body.dc-checkout-steps-ready .dc-customer-step-col .dc-shipping-title { font-size: 16px; line-height: 1.7; }
+body.dc-checkout-steps-ready .dc-address-heading h2::before, body.dc-checkout-steps-ready .dc-customer-step-col .dc-shipping-title::before, body.dc-checkout-steps-ready .dc-payment-main > h2::before, body.dc-checkout-steps-ready .dc-summary-panel > h2::before { content:''; display:inline-block; width:20px; height:20px; margin-left:8px; vertical-align:-4px; background-repeat:no-repeat; background-position:center; background-size:20px 20px; }
+body.dc-checkout-steps-ready .dc-address-heading h2::before { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23446084' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0Z'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3C/svg%3E"); }
+body.dc-checkout-steps-ready .dc-customer-step-col .dc-shipping-title::before { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23446084' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 17h4V5H2v12h3'/%3E%3Cpath d='M14 8h4l4 4v5h-3'/%3E%3Ccircle cx='7.5' cy='17.5' r='2.5'/%3E%3Ccircle cx='17.5' cy='17.5' r='2.5'/%3E%3C/svg%3E"); }
+body.dc-checkout-steps-ready .dc-payment-main > h2::before { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23446084' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2' y='5' width='20' height='14' rx='2'/%3E%3Cpath d='M2 10h20'/%3E%3C/svg%3E"); }
+body.dc-checkout-steps-ready .dc-summary-panel > h2::before { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23446084' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 3h6'/%3E%3Cpath d='M10 8h8'/%3E%3Cpath d='M8 13h10'/%3E%3Cpath d='M10 18h8'/%3E%3Cpath d='M5 8h.01'/%3E%3Cpath d='M5 13h.01'/%3E%3Cpath d='M5 18h.01'/%3E%3C/svg%3E"); }
+body.dc-checkout-steps-ready .dc-summary-panel table th, body.dc-checkout-steps-ready .dc-summary-panel table td { width:50%; }
+body.dc-checkout-steps-ready .dc-payment-main #payment .payment_methods { margin: 0 !important; padding: 0 !important; list-style: none !important; }
+body.dc-checkout-steps-ready .dc-payment-main #payment .payment_methods > li { position:relative; margin:0 0 14px !important; padding:18px 18px 14px !important; border:1px solid #dbe3ee; border-radius:14px; background:#fff; transition:all .2s ease; }
+body.dc-checkout-steps-ready .dc-payment-main #payment .payment_methods > li:has(input:checked) { border-color:#90abc8; background:#f5f8fc; box-shadow:0 0 0 3px rgba(68,96,132,.08); }
+body.dc-checkout-steps-ready .dc-payment-main #payment .payment_methods > li > input[type='radio'] { position:absolute; top:23px; right:18px; margin:0; accent-color:var(--dc-blue); }
+body.dc-checkout-steps-ready .dc-payment-main #payment .payment_methods > li > label { display:flex !important; align-items:center; justify-content:space-between; gap:12px; width:100%; padding-right:30px; margin:0 !important; color:var(--dc-ink); font-size:18px; font-weight:700; line-height:1.8; cursor:pointer; }
+body.dc-checkout-steps-ready .dc-payment-main #payment .payment_methods > li > label img { order:-1; display:block; max-width:82px; max-height:38px; width:auto; height:auto; object-fit:contain; margin:0 0 0 10px; }
+body.dc-checkout-steps-ready .dc-payment-main #payment .payment_box { background:transparent !important; border:0 !important; margin:8px 0 0 !important; padding:0 30px 0 0 !important; color:#6c7b8f; font-size:14px; line-height:2; }
+body.dc-checkout-steps-ready .dc-payment-main #place_order { min-height:56px; width:100%; border-radius:12px !important; font-size:18px !important; font-weight:700 !important; }
+body.dc-checkout-steps-ready .dc-coupon-panel { border:1px solid var(--dc-line); border-radius:12px; padding:0 16px 12px; margin:0 0 24px; }
+body.dc-checkout-steps-ready .dc-coupon-panel .dc-coupon-toggle { width:100%; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 0; background:transparent !important; color:var(--dc-ink) !important; border:0 !important; box-shadow:none !important; margin:0; font-size:18px; font-weight:700; text-transform:none; }
+body.dc-checkout-steps-ready .dc-coupon-panel .dc-coupon-chevron { color:var(--dc-blue); font-size:24px; line-height:1; transition:transform .2s ease; }
+body.dc-checkout-steps-ready .dc-coupon-panel .dc-coupon-body { display:none; padding:4px 0 0; }
+body.dc-checkout-steps-ready .dc-coupon-panel.dc-open .dc-coupon-body { display:block; }
+body.dc-checkout-steps-ready .dc-coupon-panel.dc-open .dc-coupon-chevron { transform:rotate(45deg); }
+body.dc-checkout-steps-ready .dc-delete-modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:100030; padding:16px; }
+body.dc-checkout-steps-ready.dc-delete-open .dc-delete-modal { display:flex; }
+body.dc-checkout-steps-ready .dc-delete-modal-card { width:min(420px, calc(100vw - 32px)); background:#fff; border:1px solid #e3e8ef; border-radius:18px; padding:24px 22px; text-align:center; box-shadow:0 16px 65px rgba(17,30,46,.2); }
+body.dc-checkout-steps-ready .dc-delete-icon { width:54px; height:54px; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; border-radius:16px; background:#fff2f2; font-size:26px; }
+body.dc-checkout-steps-ready .dc-delete-modal-card h3 { margin:0 0 10px; color:var(--dc-ink); font-size:24px; font-weight:700; }
+body.dc-checkout-steps-ready .dc-delete-message { margin:0 0 18px; color:#69798e; font-size:14px; line-height:2; }
+body.dc-checkout-steps-ready .dc-delete-actions { display:flex; gap:10px; justify-content:center; }
+body.dc-checkout-steps-ready .dc-delete-actions button { min-width:128px; min-height:46px; border-radius:10px; font-size:14px; font-weight:700; margin:0; text-transform:none; }
+body.dc-checkout-steps-ready .dc-delete-actions .dc-delete-confirm { background:#f3d8d8 !important; color:#b32929 !important; border:1px solid #efc1c1 !important; }
+body.dc-checkout-steps-ready .dc-delete-actions .dc-delete-cancel { background:#fff !important; color:#4d5f74 !important; border:1px solid #dbe3ee !important; }
+@media (max-width: 767px) { body.dc-checkout-steps-ready form.checkout .dc-customer-step-col, body.dc-checkout-steps-ready form.checkout .dc-payment-step-col { padding-inline:0; } body.dc-checkout-steps-ready .dc-payment-step-col #order_review .dc-summary-panel, body.dc-checkout-steps-ready .dc-payment-main { padding-inline: 16px; } body.dc-checkout-steps-ready .dc-summary-panel > h2, body.dc-checkout-steps-ready .dc-payment-main > h2, body.dc-checkout-steps-ready .dc-address-heading h2, body.dc-checkout-steps-ready .dc-customer-step-col .dc-shipping-title { font-size:16px; } body.dc-checkout-steps-ready .dc-payment-main #payment .payment_methods > li > label { font-size:16px; } body.dc-checkout-steps-ready .dc-delete-actions { flex-direction:column; } body.dc-checkout-steps-ready .dc-delete-actions button { width:100%; } }
+
+
+/* 0.4.2: narrow corrections, scoped only to the two-step checkout */
+/* The earlier 28px column-gap made 62% + 38% exceed the row width. */
+@media (min-width:900px) {
+  body.dc-checkout-steps-ready form.checkout > .row {
+    column-gap:0 !important;
+    flex-wrap:nowrap !important;
+    align-items:flex-start !important;
+  }
+  body.dc-checkout-steps-ready form.checkout.dc-show-shipping .dc-customer-step-col {
+    flex:0 0 62% !important; width:62% !important; max-width:62% !important;
+  }
+  body.dc-checkout-steps-ready form.checkout.dc-show-shipping .dc-payment-step-col {
+    flex:0 0 38% !important; width:38% !important; max-width:38% !important;
+  }
+  body.dc-checkout-steps-ready form.checkout.dc-show-payment .dc-payment-step-col {
+    flex:0 0 100% !important; width:100% !important; max-width:100% !important;
+  }
+}
+/* Hide the generic package name printed by WooCommerce, not delivery methods. */
+body.dc-checkout-steps-ready .my-custom-shipping-table th[colspan="2"] {display:none !important;}
+/* The order summary totals should reach the two opposite inside edges. */
+body.dc-checkout-steps-ready .dc-summary-panel .woocommerce-checkout-review-order-table {width:100% !important; direction:rtl; table-layout:fixed !important;}
+body.dc-checkout-steps-ready .dc-summary-panel .woocommerce-checkout-review-order-table tfoot tr {display:table-row !important;}
+body.dc-checkout-steps-ready .dc-summary-panel .woocommerce-checkout-review-order-table tfoot tr th {
+  width:52% !important; text-align:right !important; padding-right:0 !important; padding-left:5px !important;
+}
+body.dc-checkout-steps-ready .dc-summary-panel .woocommerce-checkout-review-order-table tfoot tr td {
+  width:48% !important; text-align:left !important; padding-left:0 !important; padding-right:5px !important;
+}
+body.dc-checkout-steps-ready .dc-summary-panel table td .woocommerce-Price-amount {float:none !important;}
+/* Coupon follows the total inside the summary box only on the payment step. */
+body.dc-checkout-steps-ready .dc-summary-panel .dc-coupon-panel {display:none !important; border:0; border-top:1px solid #e7ecf2; border-radius:0; padding:8px 0 10px; margin:14px 0 0;}
+body.dc-checkout-steps-ready.dc-body-payment-step .dc-summary-panel .dc-coupon-panel {display:block !important;}
+body.dc-checkout-steps-ready .dc-summary-panel .dc-coupon-toggle {font-size:15px !important;}
+/* Cashback is an informational copy only; never move wallet controls. */
+body.dc-checkout-steps-ready .dc-cashback-note {display:none; border:1px solid #d5e4d7; background:#f4faf4; border-radius:8px; padding:11px 12px; margin-top:12px; color:#2c663d; font-size:13px; line-height:2;}
+body.dc-checkout-steps-ready.dc-body-payment-step .dc-cashback-note.dc-has-cashback {display:block;}
+body.dc-checkout-steps-ready .dc-cashback-original {display:none !important;}
+/* Wallet use appears before card gateways, only in the payment step. */
+body.dc-checkout-steps-ready .dc-wallet-panel {display:none !important; margin:0 0 14px; padding:0;}
+body.dc-checkout-steps-ready.dc-body-payment-step .dc-wallet-panel.dc-has-wallet {display:block !important;}
+body.dc-checkout-steps-ready .dc-wallet-panel .shop_table {display:table !important; width:100% !important;}
+body.dc-checkout-steps-ready .dc-wallet-panel .dc-wallet-row {display:table-row !important;}
+body.dc-checkout-steps-ready .dc-wallet-panel .dc-wallet-row input {accent-color:#446084;}
+/* Payment title comes before payment gateways. Existing gateway inputs are kept. */
+body.dc-checkout-steps-ready .dc-payment-main > h2 {margin-bottom:15px;}
+body.dc-checkout-steps-ready .dc-payment-main #payment ul.payment_methods {padding:0 !important; margin:0 !important;}
+body.dc-checkout-steps-ready .dc-payment-main #payment ul.payment_methods > li {
+  position:relative !important; display:block !important; min-height:84px;
+  padding:14px 14px 13px !important; margin:0 0 10px !important;
+  border:1px solid #dee5ed; border-radius:12px; background:#fff; box-shadow:none !important;
+}
+body.dc-checkout-steps-ready .dc-payment-main #payment ul.payment_methods > li:has(>input:checked) {
+  background:#f6f8fc; border-color:#90a6c2; box-shadow:0 0 0 2px rgba(68,96,132,.07) !important;
+}
+body.dc-checkout-steps-ready .dc-payment-main #payment ul.payment_methods > li > input[type=radio] {
+  position:absolute !important; top:20px !important; right:14px !important; float:none !important;
+  margin:0 !important; accent-color:#446084; z-index:1;
+}
+body.dc-checkout-steps-ready .dc-payment-main #payment ul.payment_methods > li > label {
+  display:block !important; width:100% !important; min-height:22px;
+  position:static !important; margin:0 !important;
+  padding:0 30px 0 100px !important; font-size:15px !important; line-height:1.65 !important;
+  font-weight:700; text-align:right !important; color:#24374b;
+}
+body.dc-checkout-steps-ready .dc-payment-main #payment ul.payment_methods > li > label img {
+  position:absolute !important; left:13px !important; top:50% !important;
+  transform:translateY(-50%); float:none !important; order:initial !important;
+  margin:0 !important; max-width:78px !important; max-height:42px !important;
+  width:auto !important; height:auto !important; object-fit:contain;
+}
+body.dc-checkout-steps-ready .dc-payment-main #payment ul.payment_methods > li > .dc-gateway-description {
+  margin:3px 0 0 !important; padding:0 30px 0 100px; color:#68788c;
+  font-size:12px !important; line-height:1.75 !important; text-align:right; display:block !important;
+}
+body.dc-checkout-steps-ready .dc-payment-main #payment ul.payment_methods > li > .payment_box.dc-gateway-description-source {display:none !important;}
+/* Leave interactive payment boxes visible when the gateway needs extra inputs. */
+body.dc-checkout-steps-ready .dc-payment-main #place_order {min-height:56px; font-weight:700 !important; font-size:17px !important;}
+@media (max-width:899px) {
+  body.dc-checkout-steps-ready form.checkout > .row {column-gap:0 !important;}
+}
+@media (max-width:767px) {
+  body.dc-checkout-steps-ready .dc-payment-main #payment ul.payment_methods > li > label {padding-left:78px !important; padding-right:29px !important;}
+  body.dc-checkout-steps-ready .dc-payment-main #payment ul.payment_methods > li > .dc-gateway-description {padding-left:78px; padding-right:29px;}
+  body.dc-checkout-steps-ready .dc-payment-main #payment ul.payment_methods > li > label img {max-width:65px !important; left:10px !important;}
+  body.dc-checkout-steps-ready .dc-summary-panel .dc-coupon-inline {flex-wrap:wrap;}
+}
+
+
+/* 0.4.3 — inline coupon + wallet beneath shipping, preceding order total */
+/* WC inserts the original cart-summary table again after shipping/coupon AJAX. */
+body.dc-checkout-steps-ready .dc-summary-panel .woocommerce-checkout-review-order-table > tfoot > tr.dc-summary-interactive-row > td {
+  display:table-cell !important; width:100% !important; padding:5px 0 8px !important;
+  text-align:right !important; vertical-align:middle !important;
+}
+body.dc-checkout-steps-ready .dc-summary-panel .woocommerce-checkout-review-order-table > tfoot > tr.dc-summary-interactive-row {
+  display:table-row !important; border-bottom:1px solid #e7ecf2 !important;
+}
+body.dc-checkout-steps-ready .dc-summary-interactive-content { direction:rtl; width:100%; }
+body.dc-checkout-steps-ready .dc-summary-interactive-content .dc-coupon-panel {
+  margin:0 !important; border:0 !important; padding:0 !important; border-radius:0 !important;
+  background:transparent !important;
+}
+body.dc-checkout-steps-ready .dc-summary-interactive-content .dc-coupon-toggle {
+  padding:12px 0 !important; min-height:44px !important; font-size:14px !important;
+}
+body.dc-checkout-steps-ready .dc-summary-interactive-content .dc-coupon-panel .dc-coupon-body {
+  padding:8px 0 13px !important;
+}
+/* Wallet exists directly after coupon. It must not be visible on shipping step. */
+body.dc-checkout-steps-ready .dc-summary-interactive-content .dc-wallet-panel {display:none !important; margin:0 !important; padding:2px 0 12px !important;}
+body.dc-checkout-steps-ready.dc-body-payment-step .dc-summary-interactive-content .dc-wallet-panel.dc-has-wallet {display:block !important;}
+body.dc-checkout-steps-ready .dc-summary-interactive-content .dc-wallet-panel > .shop_table {display:table !important; width:100% !important; margin:0 !important;}
+body.dc-checkout-steps-ready .dc-summary-interactive-content .dc-wallet-panel > .shop_table > tbody { display:table-row-group !important; }
+body.dc-checkout-steps-ready .dc-summary-interactive-content .dc-wallet-panel > .shop_table > tbody > tr {display:table-row !important;}
+body.dc-checkout-steps-ready .dc-summary-interactive-content .dc-wallet-panel > .shop_table > tbody > tr > th,
+body.dc-checkout-steps-ready .dc-summary-interactive-content .dc-wallet-panel > .shop_table > tbody > tr > td {
+  display:table-cell !important; width:auto !important; text-align:initial !important; padding:7px 0 !important;
+}
+/* Center only the payment method RADIO vertically within each card.
+   Keep title, explanation and logo in their previously requested columns. */
+body.dc-checkout-steps-ready .dc-payment-main #payment ul.payment_methods > li > input[type=radio] {
+  top:50% !important; transform:translateY(-50%) !important; right:14px !important;
+}
+
+body.dc-checkout-steps-ready .dc-summary-parking {display:none !important;}
+body.dc-checkout-steps-ready .dc-summary-panel .dc-coupon-panel.dc-coupon-disabled {display:none !important;}
+
+/* 0.4.4: address editor select2/selectWoo dropdowns must float above full-screen modal.
+   Select2 often attaches its popup to document.body, below our fixed z-index 100020. */
+body.dc-checkout-steps-ready.dc-address-modal-open .select2-container--open,
+body.dc-checkout-steps-ready.dc-address-modal-open .selectWoo-container--open,
+body.dc-checkout-steps-ready.dc-address-modal-open .select2-dropdown,
+body.dc-checkout-steps-ready.dc-address-modal-open .selectWoo-dropdown,
+body.dc-checkout-steps-ready.dc-address-modal-open .select2-search__field {
+  z-index:100070 !important;
+  pointer-events:auto !important;
+}
+body.dc-checkout-steps-ready.dc-address-modal-open .woocommerce-billing-fields #billing_state_field,
+body.dc-checkout-steps-ready.dc-address-modal-open .woocommerce-billing-fields #billing_city_field {
+  pointer-events:auto !important;
+}
+body.dc-checkout-steps-ready.dc-address-modal-open .woocommerce-billing-fields #billing_state_field select,
+body.dc-checkout-steps-ready.dc-address-modal-open .woocommerce-billing-fields #billing_city_field select,
+body.dc-checkout-steps-ready.dc-address-modal-open .woocommerce-billing-fields #billing_state_field .select2-container,
+body.dc-checkout-steps-ready.dc-address-modal-open .woocommerce-billing-fields #billing_city_field .select2-container {
+  pointer-events:auto !important;
+}
+
+/* The standard WC submit stays in #payment for compatibility with gateways, but
+   the visible desktop CTA sits below the summary panel instead of payment methods. */
+body.dc-checkout-steps-ready .dc-summary-panel .dc-pay-below-summary {
+  display:none !important;
+  width:100%; min-height:54px; margin:16px 0 0 !important;
+  background:var(--dc-blue) !important; color:#fff !important; border:0 !important;
+  border-radius:10px !important; font-size:16px !important; font-weight:700 !important;
+  line-height:1.5; text-transform:none !important; letter-spacing:0 !important;
+  box-shadow:none !important;
+}
+body.dc-checkout-steps-ready.dc-body-payment-step .dc-summary-panel .dc-pay-below-summary {
+  display:block !important;
+}
+body.dc-checkout-steps-ready .dc-pay-below-summary:disabled {
+  opacity:.55; cursor:not-allowed;
+}
+/* Hide only the original submit BUTTON visually; retain payment form, gateway fields,
+   terms/hook content and WC's real button in the DOM. */
+body.dc-checkout-steps-ready.dc-body-payment-step #payment #place_order {
+  position:absolute !important; width:1px !important; height:1px !important;
+  overflow:hidden !important; clip-path:inset(50%) !important;
+  opacity:0 !important; padding:0 !important; margin:0 !important;
+  border:0 !important; pointer-events:none !important;
+}
+@media (max-width:767px) {
+  body.dc-checkout-steps-ready .dc-summary-panel .dc-pay-below-summary {display:none !important;}
+}
+
+
+/* Focused checkout and mobile refinements; styles apply only when checkout is active. */
+body.dc-checkout-steps-ready #header,
+body.dc-checkout-steps-ready #footer,
+body.dc-checkout-steps-ready .footer-wrapper,
+body.dc-checkout-steps-ready .absolute-footer,
+body.dc-checkout-steps-ready #top-bar,
+body.dc-checkout-steps-ready #wide-nav,
+body.dc-checkout-steps-ready .header-wrapper { display:none !important; }
+body.dc-checkout-steps-ready #wrapper { padding-top:0 !important; }
+body.dc-checkout-steps-ready .dc-mobile-checkout-nav { display:none; }
+@media (max-width:767px) {
+  /* One compact mobile navigation row, independent from the hidden site header. */
+  body.dc-checkout-steps-ready .dc-mobile-checkout-nav {
+    display:flex !important; align-items:center; width:100%; min-height:58px;
+    padding:0 18px; background:white; border-bottom:1px solid #e9edf2;
+    box-sizing:border-box; direction:rtl; margin:0 0 12px;
+  }
+  body.dc-checkout-steps-ready .dc-mobile-nav-back {
+    display:inline-flex !important; flex-direction:row; align-items:center; gap:12px;
+    border:0 !important; background:transparent !important; box-shadow:none !important;
+    color:#2a3545 !important; font-size:16px; font-weight:600;
+    text-transform:none !important; padding:10px 2px; margin:0 !important;
+  }
+  body.dc-checkout-steps-ready .dc-mobile-nav-arrow {font-size:22px; color:#446084; line-height:1;}
+  body.dc-checkout-steps-ready form.checkout {padding-bottom:102px !important;}
+  body.dc-checkout-steps-ready form.checkout > .row {margin-inline:0 !important; width:100% !important;}
+  body.dc-checkout-steps-ready form.checkout .dc-customer-step-col,
+  body.dc-checkout-steps-ready form.checkout .dc-payment-step-col {padding:0 16px !important;}
+  body.dc-checkout-steps-ready form.checkout #customer_details {padding:0 !important;}
+  body.dc-checkout-steps-ready .dc-payment-step-col #order_review .dc-summary-panel {
+    padding:20px 16px !important; margin-bottom:15px !important; box-sizing:border-box;
+  }
+  body.dc-checkout-steps-ready .dc-payment-main {padding:8px 0 10px !important; box-sizing:border-box;}
+  body.dc-checkout-steps-ready .dc-customer-step-col .my-custom-shipping-table,
+  body.dc-checkout-steps-ready .dc-address-block {box-sizing:border-box; margin-inline:0 !important;}
+  body.dc-checkout-steps-ready .dc-mobile-fixed-actions {
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom)) !important;
+    gap:16px !important; justify-content:space-between !important;
+  }
+  /* On address screen allow noticeably more room for the amount. */
+  body.dc-checkout-steps-ready.dc-body-shipping-step .dc-mobile-primary {
+    flex:0 1 59% !important; width:59% !important; max-width:59% !important;
+    font-size:12px !important; min-height:50px !important; padding:8px 6px !important;
+    white-space:normal !important; line-height:1.6 !important;
+  }
+  body.dc-checkout-steps-ready.dc-body-shipping-step .dc-fixed-total {
+    flex:1 1 37% !important; max-width:none !important; min-width:0 !important;
+  }
+  body.dc-checkout-steps-ready .dc-fixed-total strong {font-size:13px !important; white-space:nowrap;}
+  /* Payment has one and only one visible primary button with its live cart price. */
+  body.dc-checkout-steps-ready.dc-body-payment-step .dc-mobile-fixed-actions {
+    padding:9px 16px calc(9px + env(safe-area-inset-bottom)) !important;
+  }
+  body.dc-checkout-steps-ready.dc-body-payment-step .dc-fixed-total {display:none !important;}
+  body.dc-checkout-steps-ready.dc-body-payment-step .dc-mobile-primary {
+    flex:1 1 100% !important; width:100% !important; max-width:none !important;
+    display:flex !important; align-items:center; justify-content:center; gap:10px;
+    font-size:16px !important; font-weight:700 !important; min-height:54px !important;
+  }
+  body.dc-checkout-steps-ready .dc-mobile-pay-amount {font-size:15px; font-weight:700; white-space:nowrap;}
+  body.dc-checkout-steps-ready form.checkout.dc-show-payment .dc-pay-below-summary,
+  body.dc-checkout-steps-ready.dc-body-payment-step #payment #place_order { 
+    position:absolute !important; width:1px !important; height:1px !important;
+    opacity:0 !important; overflow:hidden !important; clip-path:inset(50%) !important;
+    pointer-events:none !important; margin:0 !important; padding:0 !important; border:0 !important;
+  }
+  body.dc-checkout-steps-ready .dc-mobile-fixed-actions {z-index:10010 !important;}
+}
+
+/* Remove the empty Additional Information title without hiding Mobits fields.
+   PHP also turns off the optional WC order-notes field only on focused checkout. */
+body.dc-checkout-steps-ready #customer_details .woocommerce-additional-fields > h3 {display:none !important;}
+body.dc-checkout-steps-ready #customer_details .woocommerce-additional-fields > .woocommerce-additional-fields__field-wrapper:empty {display:none !important;}
+body.dc-checkout-steps-ready #customer_details .woocommerce-additional-fields {padding-block:0 !important; margin-block:0 !important;}
+
+/* Desktop checkout does not have a "back to shipping" action. Mobile uses its own icon-only arrow. */
+body.dc-checkout-steps-ready .dc-go-back {display:none !important;}
+@media (max-width:767px) {
+  body.dc-checkout-steps-ready .dc-mobile-checkout-nav {justify-content:flex-start !important; gap:10px;}
+  body.dc-checkout-steps-ready .dc-mobile-nav-back {
+    width:40px; height:40px; flex:0 0 40px; margin:0 !important; padding:5px !important;
+    justify-content:center; display:inline-flex !important; align-items:center;
+  }
+  body.dc-checkout-steps-ready .dc-mobile-nav-back svg {
+    display:block; width:15px; height:15px; color:#446084;
+    transform:none !important; fill:none;
+  }
+  body.dc-checkout-steps-ready .dc-mobile-nav-text {font-size:14px; font-weight:600; pointer-events:none;}
+}
+
+/* The embedded coupon/wallet row is only needed in the payment step.
+   An empty row's default border was leaving two lines after shipping. */
+body.dc-checkout-steps-ready.dc-body-shipping-step .dc-summary-panel .woocommerce-checkout-review-order-table > tfoot > tr.dc-summary-interactive-row {
+  display:none !important; border:0 !important;
+}
+body.dc-checkout-steps-ready.dc-body-payment-step .dc-summary-panel .woocommerce-checkout-review-order-table > tfoot > tr.dc-summary-interactive-row:not(.dc-summary-has-extras) {
+  display:none !important; border:0 !important;
+}
+body.dc-checkout-steps-ready.dc-body-payment-step .dc-summary-panel .woocommerce-checkout-review-order-table > tfoot > tr.dc-summary-interactive-row.dc-summary-has-extras {
+  border-bottom:0 !important;
+}
+body.dc-checkout-steps-ready.dc-body-payment-step .dc-summary-interactive-content .dc-coupon-panel:not(.dc-coupon-disabled) {
+  border-bottom:1px solid #e7ecf2 !important; padding-bottom:6px !important;
+}
+body.dc-checkout-steps-ready.dc-body-payment-step .dc-summary-interactive-content .dc-wallet-panel.dc-has-wallet {
+  border-bottom:1px solid #e7ecf2 !important; padding-bottom:10px !important;
+}
+body.dc-checkout-steps-ready .dc-picker-limit-notice {
+  color:#6a4a27; background:#fff7e8; border-radius:8px;
+  margin:14px 0 0; padding:10px 12px; line-height:1.9; font-size:13px;
+}
+
+/* Consistent mobile navigation, arrow direction, button typography and white canvas. */
+body.dc-checkout-steps-ready,
+body.dc-checkout-steps-ready #wrapper,
+body.dc-checkout-steps-ready #main,
+body.dc-checkout-steps-ready #content,
+body.dc-checkout-steps-ready .page-wrapper,
+body.dc-checkout-steps-ready .shop-container {
+  background-color:#fff !important;
+}
+body.dc-checkout-steps-ready #main { min-height:100dvh; }
+body.dc-checkout-steps-ready .dc-next-step,
+body.dc-checkout-steps-ready .dc-pay-below-summary,
+body.dc-checkout-steps-ready .dc-mobile-primary,
+body.dc-checkout-steps-ready #payment #place_order {
+  font-size:14px !important;
+  font-family:inherit !important;
+  font-weight:700 !important;
+  line-height:1.55 !important;
+}
+@media(max-width:767px) {
+  body.dc-checkout-steps-ready .dc-mobile-nav-text {
+    font-size:14px !important;
+    color:#778497 !important;
+    font-weight:600 !important;
+    line-height:1.65 !important;
+  }
+  body.dc-checkout-steps-ready .dc-mobile-nav-back svg {
+    color:#778497 !important;
+    transform:none !important;
+  }
+  body.dc-checkout-steps-ready.dc-body-shipping-step .dc-mobile-primary,
+  body.dc-checkout-steps-ready.dc-body-payment-step .dc-mobile-primary {
+    font-size:14px !important;
+    font-weight:700 !important;
+    line-height:1.55 !important;
+    font-family:inherit !important;
+  }
+  body.dc-checkout-steps-ready .dc-mobile-primary > span,
+  body.dc-checkout-steps-ready .dc-mobile-pay-amount {
+    font-size:14px !important;
+    line-height:1.55 !important;
+    font-family:inherit !important;
+  }
+}
+
+
+/* Coupon above payment with a collapsed toggle. */
+body.dc-checkout-steps-ready .dc-payment-main > .dc-coupon-panel {
+  display:block !important;
+  margin:0 0 16px !important;
+  padding:0 0 14px !important;
+  border:0 !important;
+  border-bottom:8px solid #f7f8fa !important;
+  border-radius:0 !important;
+  background:#fff !important;
+}
+body.dc-checkout-steps-ready .dc-payment-main > .dc-coupon-panel.dc-coupon-disabled {display:none !important;}
+body.dc-checkout-steps-ready .dc-payment-main .dc-coupon-toggle {
+  width:100%; min-height:53px; margin:0 !important; padding:10px 1px !important;
+  border:0 !important; border-radius:0 !important; box-shadow:none !important;
+  display:flex !important; flex-direction:row; justify-content:space-between; align-items:center;
+  background:#fff !important; color:var(--dc-ink) !important; font-size:18px !important;
+  font-weight:700 !important; text-transform:none !important; letter-spacing:0 !important;
+}
+body.dc-checkout-steps-ready .dc-payment-main .dc-coupon-toggle .dc-coupon-title {order:0;}
+body.dc-checkout-steps-ready .dc-payment-main .dc-coupon-toggle .dc-coupon-switch {
+  order:1; position:relative; width:35px; height:20px; flex:0 0 35px;
+  border-radius:12px; background:#e5e6e6; transition:background .2s ease;
+}
+body.dc-checkout-steps-ready .dc-payment-main .dc-coupon-toggle .dc-coupon-knob {
+  position:absolute; top:2px; right:2px; width:16px; height:16px;
+  background:#fff; border-radius:100%; box-shadow:0 1px 2px rgba(0,0,0,.1);
+  transition:transform .2s ease;
+}
+body.dc-checkout-steps-ready .dc-payment-main > .dc-coupon-panel.dc-open .dc-coupon-switch {background:var(--dc-blue);}
+body.dc-checkout-steps-ready .dc-payment-main > .dc-coupon-panel.dc-open .dc-coupon-knob {transform:translateX(-15px);}
+body.dc-checkout-steps-ready .dc-payment-main .dc-coupon-body {display:none; padding:9px 0 0 !important;}
+body.dc-checkout-steps-ready .dc-payment-main > .dc-coupon-panel.dc-open .dc-coupon-body {display:block !important;}
+body.dc-checkout-steps-ready .dc-payment-main .dc-coupon-inline {display:flex; align-items:center; gap:9px; flex-wrap:nowrap;}
+body.dc-checkout-steps-ready .dc-payment-main .dc-coupon-input {
+  flex:1; min-width:0; min-height:44px; border:1px solid #dae1e8;
+  border-radius:8px; background:white; box-shadow:none !important;
+}
+body.dc-checkout-steps-ready .dc-payment-main .dc-coupon-apply {
+  flex:0 0 auto; min-height:44px; margin:0 !important;
+  padding:7px 17px; border-radius:8px; border:0; color:#fff;
+  background:var(--dc-blue); text-transform:none; font-size:14px;
+}
+/* Wallet stays in its existing WooCommerce-backed position. Never show an empty row. */
+body.dc-checkout-steps-ready.dc-body-payment-step .dc-summary-panel .woocommerce-checkout-review-order-table > tfoot > tr.dc-summary-interactive-row:not(.dc-summary-has-extras) {display:none !important;}
+/* The final total is already present in the sticky mobile action; suppress just
+   its redundant table presentation on mobile, not WC totals/checkout data. */
+@media(max-width:767px) {
+  body.dc-checkout-steps-ready .dc-summary-panel .woocommerce-checkout-review-order-table > tfoot > tr.order-total {display:none !important;}
+}
+/* Sticky / fixed back navigation across cart, shipping and payment, with safe
+   room reserved in document flow so it cannot overlap the first section. */
+body.dc-checkout-steps-ready .dc-mobile-nav-spacer {display:none;}
+@media(max-width:767px) {
+  body.dc-checkout-steps-ready .dc-mobile-checkout-nav {
+    position:fixed !important; top:0 !important; left:0 !important; right:0 !important;
+    z-index:10015 !important; margin:0 !important; min-height:50px !important;
+    padding:0 15px !important; width:100% !important;
+    display:flex !important; gap:0 !important; align-items:center !important;
+    justify-content:flex-start !important; background:#fff !important;
+    border-bottom:1px solid #edf0f3 !important; box-shadow:0 1px 3px rgba(0,0,0,.025);
+  }
+  body.dc-checkout-steps-ready .dc-mobile-nav-spacer {display:block; height:30px; width:100%;}
+  body.dc-checkout-steps-ready .dc-mobile-nav-back {width:34px !important; height:38px !important; flex-basis:34px !important; padding:3px !important;}
+  body.dc-checkout-steps-ready .dc-mobile-nav-text {font-size:14px !important; color:#778497 !important; font-weight:600 !important;}
+  body.dc-checkout-steps-ready .dc-payment-main > .dc-coupon-panel {margin-bottom:18px !important;}
+  body.dc-checkout-steps-ready .dc-payment-main .dc-coupon-toggle {font-size:16px !important;}
+}
+
+
+/* 0.4.9 — prevent horizontal panning on checkout mobiles without touching maps,
+   the Select2 dropdown, or other pages. All dialogs remain viewport-positioned. */
+@media (max-width:899px) {
+  html:has(body.dc-checkout-steps-ready),
+  body.dc-checkout-steps-ready {
+    width:100%; max-width:100%; overflow-x:clip !important;
+  }
+  body.dc-checkout-steps-ready #wrapper,
+  body.dc-checkout-steps-ready #main,
+  body.dc-checkout-steps-ready #content,
+  body.dc-checkout-steps-ready .page-wrapper,
+  body.dc-checkout-steps-ready form.checkout,
+  body.dc-checkout-steps-ready form.checkout > .row,
+  body.dc-checkout-steps-ready #customer_details,
+  body.dc-checkout-steps-ready #order_review,
+  body.dc-checkout-steps-ready .dc-payment-main,
+  body.dc-checkout-steps-ready .dc-summary-panel,
+  body.dc-checkout-steps-ready .dc-mobile-checkout-nav,
+  body.dc-checkout-steps-ready .dc-mobile-fixed-actions {
+    box-sizing:border-box !important;
+    min-width:0 !important;
+    max-width:100% !important;
+  }
+  body.dc-checkout-steps-ready form.checkout > .row {
+    width:100% !important; margin-left:0 !important; margin-right:0 !important;
+  }
+  body.dc-checkout-steps-ready form.checkout .dc-customer-step-col,
+  body.dc-checkout-steps-ready form.checkout .dc-payment-step-col,
+  body.dc-checkout-steps-ready .dc-payment-main #payment,
+  body.dc-checkout-steps-ready .dc-payment-main .payment_methods,
+  body.dc-checkout-steps-ready .dc-payment-main .payment_methods > li,
+  body.dc-checkout-steps-ready .dc-payment-main .payment_methods > li > label,
+  body.dc-checkout-steps-ready .dc-summary-panel .shop_table {
+    box-sizing:border-box !important; min-width:0 !important;
+    max-width:100% !important;
+  }
+  body.dc-checkout-steps-ready .dc-payment-main .payment_methods > li > label,
+  body.dc-checkout-steps-ready .dc-payment-main .payment_box,
+  body.dc-checkout-steps-ready .dc-summary-panel td,
+  body.dc-checkout-steps-ready .dc-summary-panel th {
+    overflow-wrap:anywhere;
+  }
+  body.dc-checkout-steps-ready .dc-payment-main .payment_methods > li > label img {
+    flex:0 0 auto;
+    max-width:68px !important;
+    height:auto !important;
+  }
+}
+
+
+/* Two-column address form using the real YITH field wrappers. */
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_address_4_field,
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_address_3_field {
+  display:block !important; float:none !important; min-width:0 !important;
+}
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_state_field,
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_city_field,
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_address_4_field,
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_address_3_field {
+  flex:0 0 48.5% !important; width:48.5% !important; max-width:48.5% !important;
+  margin:0 0 13px !important; padding:0 !important;
+}
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_state_field {order:20}
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_city_field {order:21}
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_address_1_field {order:30}
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_address_4_field {order:40}
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_address_3_field {order:41}
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_postcode_field {order:50}
+body.dc-checkout-steps-ready .dc-modal-details.dc-editing-address .woocommerce-billing-fields__field-wrapper > #billing_first_name_field {order:1}
+body.dc-checkout-steps-ready .dc-modal-details.dc-editing-address .woocommerce-billing-fields__field-wrapper > #billing_last_name_field {order:2}
+body.dc-checkout-steps-ready .dc-modal-details.dc-editing-address .woocommerce-billing-fields__field-wrapper > #billing_phone_field {order:3}
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_address_4_field input,
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_address_3_field input {width:100%; min-width:0; box-sizing:border-box}
+@media (max-width:380px) {
+  body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_state_field,
+  body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_city_field,
+  body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_address_4_field,
+  body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_address_3_field {
+    flex-basis:48.5% !important; width:48.5% !important; max-width:48.5% !important;
+  }
+}
+
+/* Keep a visible plaque caption when Flatsome/YITH hides generic address labels. */
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_address_4_field,
+body.dc-checkout-steps-ready .dc-modal-details .woocommerce-billing-fields__field-wrapper > #billing_address_3_field {
+  display:block !important; visibility:visible !important; opacity:1 !important;
+}
+body.dc-checkout-steps-ready .dc-modal-details #billing_address_4_field > label,
+body.dc-checkout-steps-ready .dc-modal-details #billing_address_3_field > label,
+body.dc-checkout-steps-ready .dc-modal-details #billing_address_4_field .label,
+body.dc-checkout-steps-ready .dc-modal-details #billing_address_3_field .label {
+  display:block !important; visibility:visible !important; opacity:1 !important;
+}
+
+/* Visual styling scoped to the address edit modal. */
+body.dc-checkout-steps-ready .dc-modal-details.dc-editing-address .woocommerce-billing-fields__field-wrapper > #billing_first_name_field,
+body.dc-checkout-steps-ready .dc-modal-details.dc-editing-address .woocommerce-billing-fields__field-wrapper > #billing_last_name_field {
+  display:block !important;
+  flex:0 0 48.5% !important;
+  width:48.5% !important;
+  max-width:48.5% !important;
+  min-width:0 !important;
+  float:none !important;
+  clear:none !important;
+  margin:0 0 13px !important;
+  padding:0 !important;
+  box-sizing:border-box !important;
+}
+body.dc-checkout-steps-ready .dc-modal-details.dc-editing-address #billing_first_name_field input,
+body.dc-checkout-steps-ready .dc-modal-details.dc-editing-address #billing_last_name_field input {
+  width:100% !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+}
+
+
+/* Checkout modal: show required asterisks in red.
+   Does not make any optional field required or change Woo/YITH validation. */
+body.dc-checkout-steps-ready.dc-address-modal-open .woocommerce-billing-fields label .required,
+body.dc-checkout-steps-ready.dc-address-modal-open .woocommerce-billing-fields label abbr.required,
+body.dc-checkout-steps-ready.dc-address-modal-open .woocommerce-billing-fields label span.required,
+body.dc-checkout-steps-ready.dc-address-modal-open .woocommerce-billing-fields label.required_field abbr.required,
+body.dc-checkout-steps-ready.dc-address-modal-open .woocommerce-billing-fields label.required_field span.required {
+  color:#d62e38 !important;
+  opacity:1 !important;
+  text-decoration:none !important;
+}
+
+/* Entire WooCommerce shipping-rate card is clickable.
+   Existing .ersal-tozi-kutah descriptions from the child theme remain intact. */
+body.dc-checkout-steps-ready .my-custom-shipping-table ul.woocommerce-shipping-methods > li.shipping__list_item {
+  cursor:pointer;
+  transition:background-color .15s ease, border-color .15s ease;
+}
+body.dc-checkout-steps-ready .my-custom-shipping-table ul.woocommerce-shipping-methods > li.shipping__list_item:not(:has(input:disabled)):hover {
+  border-color:#9aacc5;
+}
+body.dc-checkout-steps-ready .my-custom-shipping-table ul.woocommerce-shipping-methods > li.shipping__list_item input[type="radio"] {
+  cursor:pointer;
+}
+body.dc-checkout-steps-ready .my-custom-shipping-table ul.woocommerce-shipping-methods > li.shipping__list_item label,
+body.dc-checkout-steps-ready .my-custom-shipping-table ul.woocommerce-shipping-methods > li.shipping__list_item .ersal-tozi-kutah {
+  cursor:pointer;
+}
+
+/* Scoped checkout UI additions; user-customized CSS is retained. */
+body.dc-checkout-steps-ready .woocommerce-billing-fields label abbr.required,
+body.dc-checkout-steps-ready .woocommerce-billing-fields label span.required {
+  color:#d12c35 !important;
+}
+/* Entire payment gateway card, including its static description, is clickable. */
+body.dc-checkout-steps-ready .dc-payment-main #payment ul.payment_methods > li.wc_payment_method,
+body.dc-checkout-steps-ready .dc-payment-main #payment ul.payment_methods > li.wc_payment_method > .dc-gateway-description {
+  cursor:pointer;
+}
+/* Keep actual form controls and links in payment gateway boxes interactive. */
+body.dc-checkout-steps-ready .dc-payment-main #payment ul.payment_methods > li input,
+body.dc-checkout-steps-ready .dc-payment-main #payment ul.payment_methods > li select,
+body.dc-checkout-steps-ready .dc-payment-main #payment ul.payment_methods > li a { cursor:auto; }
+/* Reuse one subtle spinner across desktop and mobile checkout actions. */
+body.dc-checkout-steps-ready .dc-next-step.dc-action-loading::after,
+body.dc-checkout-steps-ready .dc-pay-below-summary.dc-action-loading::after,
+body.dc-checkout-steps-ready .dc-mobile-primary.dc-action-loading::after {
+  content:"";
+  display:inline-block;
+  vertical-align:-3px;
+  width:16px;
+  height:16px;
+  margin-inline-start:9px;
+  border:2px solid rgba(255,255,255,.43);
+  border-top-color:#fff;
+  border-radius:50%;
+  box-sizing:border-box;
+  animation:dc-action-spin .75s linear infinite;
+}
+body.dc-checkout-steps-ready .dc-action-loading { cursor:progress !important; opacity:.84; }
+@keyframes dc-action-spin {to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){
+  body.dc-checkout-steps-ready .dc-action-loading::after{animation-duration:1.6s}
+}
+
+
+/* Full-height Uttamap picker on mobile, scoped to the map stage only. */
+@media (max-width: 767px) {
+  body.dc-checkout-steps-ready.dc-address-modal-open form.checkout .woocommerce-billing-fields.dc-modal-map.dc-map-uttamap {
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  body.dc-checkout-steps-ready .woocommerce-billing-fields.dc-modal-map.dc-map-uttamap .dc-modal-header {
+    position: relative !important;
+    flex: 0 0 56px !important;
+    min-height: 56px !important;
+    margin: 0 -16px !important;
+    padding: 0 58px !important;
+    justify-content: center !important;
+    border-bottom: 1px solid #eef1f5 !important;
+    z-index: 30 !important;
+  }
+  body.dc-checkout-steps-ready .dc-modal-map.dc-map-uttamap .dc-modal-header h2 {
+    text-align: center !important;
+    font-size: 16px !important;
+  }
+  body.dc-checkout-steps-ready .dc-modal-map.dc-map-uttamap .dc-modal-header .dc-modal-close {
+    position: absolute !important;
+    right: 9px !important;
+    left: auto !important;
+    top: 7px !important;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    font-size: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #34455b !important;
+    order: 0 !important;
+  }
+  body.dc-checkout-steps-ready .dc-modal-map.dc-map-uttamap .dc-modal-header .dc-modal-close::before {
+    content: '→';
+    font-size: 27px !important;
+    line-height: 1 !important;
+    font-weight: 400 !important;
+  }
+  body.dc-checkout-steps-ready .dc-modal-map.dc-map-uttamap .dc-map-hint,
+  body.dc-checkout-steps-ready .dc-modal-map.dc-map-uttamap .dc-modal-error:empty {
+    display: none !important;
+  }
+  body.dc-checkout-steps-ready .dc-modal-map.dc-map-uttamap .dc-modal-error:not(:empty) {
+    position: absolute !important;
+    top: 66px !important;
+    left: 15px !important;
+    right: 15px !important;
+    margin: 0 !important;
+    z-index: 40 !important;
+  }
+  body.dc-checkout-steps-ready .woocommerce-billing-fields.dc-modal-map.dc-map-uttamap .dc-modal-footer {
+    flex: 0 0 auto !important;
+    position: relative !important;
+    min-height: 80px !important;
+    margin: 0 -16px !important;
+    padding: 11px 16px calc(11px + env(safe-area-inset-bottom, 0px)) !important;
+    gap: 10px !important;
+    box-shadow: 0 -2px 10px rgba(18,37,62,.04) !important;
+    z-index: 30 !important;
+  }
+  body.dc-checkout-steps-ready .dc-modal-map.dc-map-uttamap .dc-modal-footer .dc-modal-manual {
+    order: 0 !important;
+    flex: 1 1 50% !important;
+    width: 50% !important;
+    min-width: 0 !important;
+    font-size: 14px !important;
+    white-space: nowrap !important;
+  }
+  body.dc-checkout-steps-ready .dc-modal-map.dc-map-uttamap .dc-modal-footer .dc-modal-main {
+    order: 1 !important;
+    flex: 1 1 50% !important;
+    width: 50% !important;
+    min-width: 0 !important;
+    font-size: 14px !important;
+    white-space: nowrap !important;
+  }
+}
